@@ -16,6 +16,8 @@
 <c:forEach items="${people}" var="p">
 	<a href="people/${p.id}">${p.name}</a><br/>
 </c:forEach>
-
+<br/>
+<c:url value="/people/new" var="newUrl"/>
+<a href="${newUrl}">New Person</a>
 </body>
 </html>

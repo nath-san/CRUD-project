@@ -32,6 +32,8 @@ public class MyFirstServlet extends HttpServlet {
 		if(req.getPathInfo() == null){
 			req.setAttribute("people", people);
 			getServletContext().getRequestDispatcher("/allPeople.jsp").forward(req, resp);
+		}else if(req.getPathInfo().substring(1).equals("new")){
+			getServletContext().getRequestDispatcher("/new.jsp").forward(req, resp);
 		}else{
 			String param = req.getPathInfo().substring(1);
 			Person p = findPerson(Integer.parseInt(param)); 
@@ -49,8 +51,15 @@ public class MyFirstServlet extends HttpServlet {
 		return null;
 	}
 
-	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-
+	protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+		String name = req.getParameter("name");
+		int id = Integer.parseInt(req.getParameter("id"));
+		int age = Integer.parseInt(req.getParameter("age"));
+		Person p = new Person(name, id, age);
+		people.add(p);
+		String url = "people/"+id;
+		resp.sendRedirect(url);
+		return;
 	}
 
 }

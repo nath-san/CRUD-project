@@ -12,5 +12,7 @@
 </head>
 <body>
 	${person.name}<br/>
+	<c:url value="/people" var="peopleUrl"/>
+	<a href="${peopleUrl}">Back</a>
 </body>
 </html>

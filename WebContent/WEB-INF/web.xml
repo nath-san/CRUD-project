@@ -7,19 +7,9 @@
     <servlet-class>se.cygni.webtest.MyFirstServlet</servlet-class>
   </servlet>
   
-  <servlet>
-    <servlet-name>newPerson</servlet-name>
-    <servlet-class>se.cygni.webtest.MySecondServlet</servlet-class>
-  </servlet>
-  
   <servlet-mapping>
     <servlet-name>people</servlet-name>
     <url-pattern>/people/*</url-pattern>
-  </servlet-mapping>
-  
-  <servlet-mapping>
-    <servlet-name>newPerson</servlet-name>
-    <url-pattern>/people/new</url-pattern>
   </servlet-mapping>
   
   <welcome-file-list>
