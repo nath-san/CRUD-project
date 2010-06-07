@@ -5,12 +5,14 @@
 <html>
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-<title>Create new person</title>
+<title>Insert title here</title>
 </head>
 <body>
-	<form action="/project1/people" method="POST">
-      	Name: <input type="text" name="name" size="20"><br/>
-        Age: <input type="text" name="age" size="10"><br/><br/>
+<c:url value="/people/${p.id}" var="updateUrl"/>
+<form action="${updateUrl}" method="POST">
+      	Name: <input type="text" name="name" size="20" value="${p.name}"><br/>
+        Age: <input type="text" name="age" size="10" value="${p.age}"><br/><br/>
+        <input type="hidden" name="id" value="${p.id}">
         <input type="submit" value="Submit">
     </form>
 </body>

@@ -16,10 +16,10 @@ public class MyFirstServlet extends HttpServlet {
 	private List<Person> people = new ArrayList<Person>();
 	
 	public MyFirstServlet(){
-		people.add(new Person("Berra", 1, 12));
-		people.add(new Person("Agda", 2, 22));
-		people.add(new Person("Gurra", 3, 32));
-		people.add(new Person("Signe", 4, 42));
+		people.add(new Person("Berra", 12));
+		people.add(new Person("Agda", 22));
+		people.add(new Person("Gurra", 32));
+		people.add(new Person("Signe", 42));
 	}
 	
 	//	@Override
@@ -34,7 +34,13 @@ public class MyFirstServlet extends HttpServlet {
 			getServletContext().getRequestDispatcher("/allPeople.jsp").forward(req, resp);
 		}else if(req.getPathInfo().substring(1).equals("new")){
 			getServletContext().getRequestDispatcher("/new.jsp").forward(req, resp);
-		}else{
+		}else if(req.getPathInfo().endsWith("update")){
+			int id = Integer.parseInt(req.getPathInfo().substring(1, 2));
+			Person p = findPerson(id);
+			req.setAttribute("p", p);
+			getServletContext().getRequestDispatcher("/update.jsp").forward(req, resp);
+		}
+		else{
 			String param = req.getPathInfo().substring(1);
 			Person p = findPerson(Integer.parseInt(param)); 
 			req.setAttribute("person", p);
@@ -52,14 +58,21 @@ public class MyFirstServlet extends HttpServlet {
 	}
 
 	protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-		String name = req.getParameter("name");
-		int id = Integer.parseInt(req.getParameter("id"));
-		int age = Integer.parseInt(req.getParameter("age"));
-		Person p = new Person(name, id, age);
-		people.add(p);
-		String url = "people/"+id;
-		resp.sendRedirect(url);
-		return;
+		if(req.getPathInfo() == null){
+			String name = req.getParameter("name");
+			int age = Integer.parseInt(req.getParameter("age"));
+			Person p = new Person(name, age);
+			people.add(p);
+			resp.sendRedirect(getServletContext().getContextPath()+"/people/"+p.getId());
+			return;
+		}else{
+			int id = Integer.parseInt(req.getParameter("id"));
+			Person p = findPerson(id);
+			p.setName(req.getParameter("name"));
+			p.setAge(Integer.parseInt(req.getParameter("age")));
+			resp.sendRedirect(getServletContext().getContextPath()+"/people/"+p.getId());
+			return;
+		}
 	}
 
 }

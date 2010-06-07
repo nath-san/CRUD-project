@@ -3,11 +3,13 @@ package se.cygni.webtest;
 public class Person {
 	private String name;
 	private int id, age;
+	private static int count = 1;
 	
-	public Person(String name, int id, int age) {
+	public Person(String name, int age) {
 		this.name = name;
-		this.id = id;
+		this.id = count;
 		this.age = age;
+		count++;
 	}
 	
 	public String getName() {
@@ -19,15 +21,12 @@ public class Person {
 	public int getId() {
 		return id;
 	}
-	public void setId(int id) {
-		this.id = id;
-	}
+	
 	public int getAge() {
 		return age;
 	}
 	public void setAge(int age) {
 		this.age = age;
 	}
-	
 	
 }

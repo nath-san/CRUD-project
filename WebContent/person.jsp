@@ -13,6 +13,8 @@
 <body>
 	${person.name}<br/>
 	<c:url value="/people" var="peopleUrl"/>
+	<c:url value="/people/${person.id}/update" var="updateUrl"/>
 	<a href="${peopleUrl}">Back</a>
+	<a href="${updateUrl}">Update</a>
 </body>
 </html>
