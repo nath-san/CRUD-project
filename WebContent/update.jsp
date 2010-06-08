@@ -8,10 +8,21 @@
 <title>Insert title here</title>
 </head>
 <body>
+	<h2>Update person</h2>	
+    <p>${message}</p>
 <c:url value="/people/${p.id}" var="updateUrl"/>
+
 <form action="${updateUrl}" method="POST">
-      	Name: <input type="text" name="name" size="20" value="${p.name}"><br/>
+<c:choose>
+<c:when test="${errorUpdate}">
+      	Name (when wrong input): <input type="text" name="name" size="20" value="${name}"><br/>
+        Age: <input type="text" name="age" size="10" value="${age}"><br/>
+</c:when>
+<c:otherwise>
+		Name (first time): <input type="text" name="name" size="20" value="${p.name}"><br/>
         Age: <input type="text" name="age" size="10" value="${p.age}"><br/><br/>
+</c:otherwise>      
+</c:choose>
         <input type="hidden" name="id" value="${p.id}">
         <input type="submit" value="Submit">
     </form>

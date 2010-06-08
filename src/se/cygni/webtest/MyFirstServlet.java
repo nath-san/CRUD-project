@@ -28,17 +28,23 @@ public class MyFirstServlet extends HttpServlet {
 	//	}
 
 	protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+		//All people view
 		if(req.getPathInfo() == null){
 			req.setAttribute("people", people);
 			getServletContext().getRequestDispatcher("/allPeople.jsp").forward(req, resp);
-		}else if(req.getPathInfo().substring(1).equals("new")){
+		}
+		//New person view
+		else if(req.getPathInfo().substring(1).equals("new")){
 			getServletContext().getRequestDispatcher("/new.jsp").forward(req, resp);
-		}else if(req.getPathInfo().endsWith("update")){
+		}
+		//Update person view
+		else if(req.getPathInfo().endsWith("update")){
 			int id = Integer.parseInt(req.getPathInfo().substring(1, 2));
 			Person p = findPerson(id);
 			req.setAttribute("p", p);
 			getServletContext().getRequestDispatcher("/update.jsp").forward(req, resp);
 		}
+		//Person view
 		else{
 			String param = req.getPathInfo().substring(1);
 			Person p = findPerson(Integer.parseInt(param)); 
@@ -48,28 +54,70 @@ public class MyFirstServlet extends HttpServlet {
 	}
 
 
-
 	protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+		String name = req.getParameter("name");
+		String age = req.getParameter("age");
+		//Create a new person
 		if(req.getPathInfo() == null){
-			String name = req.getParameter("name");
-			int age = Integer.parseInt(req.getParameter("age"));
-			Person p = new Person(name, age);
-			people.add(p);
-			resp.sendRedirect(getServletContext().getContextPath()+"/people/"+p.getId());
-			return;
-		}else if(req.getParameter("_method")==null){
+			//Checks to see if name and age are valid
+			if(checkInput(name, age)){
+				Person p = new Person(name, Integer.parseInt(age));
+				people.add(p);
+				resp.sendRedirect(getServletContext().getContextPath()+"/people/"+p.getId());
+				return;
+			}
+			//If name or age are invalid, go back to form
+			else{
+				req.setAttribute("errorNew", true);
+				req.setAttribute("name", name);
+				req.setAttribute("age", age);
+				req.setAttribute("message", "Invalid input! Name must contain more than three characters and age must be a positive number! Please try again!");
+				getServletContext().getRequestDispatcher("/new.jsp").forward(req, resp);
+			}
+		}
+		//Update person
+		else if(req.getParameter("_method")==null){
 			int id = Integer.parseInt(req.getParameter("id"));
 			Person p = findPerson(id);
-			p.setName(req.getParameter("name"));
-			p.setAge(Integer.parseInt(req.getParameter("age")));
-			resp.sendRedirect(getServletContext().getContextPath()+"/people/"+p.getId());
-			return;
-		}else{
+			if(checkInput(name, age)){
+				p.setName(name);
+				p.setAge(Integer.parseInt(age));
+				resp.sendRedirect(getServletContext().getContextPath()+"/people/"+p.getId());
+				return;
+			}
+			//If name or age are invalid, go back to form
+			else{
+				req.setAttribute("p", p);
+				req.setAttribute("name", name);
+				req.setAttribute("age", age);
+				req.setAttribute("errorUpdate", true);
+				req.setAttribute("message", "Invalid input! Name must contain more than three characters and age must be a positive number! Please try again!");
+				getServletContext().getRequestDispatcher("/update.jsp").forward(req, resp);
+			}
+		}
+		//Delete a person
+		else{
 			deletePerson(Integer.parseInt(req.getPathInfo().substring(1)));
 			resp.sendRedirect(getServletContext().getContextPath()+"/people");
 		}
 	}
 	
+	private boolean checkInput(String name, String age) {
+		int parsedAge;
+		try{
+			parsedAge = Integer.parseInt(age);
+		}
+		catch(NumberFormatException nfe){
+			return false;
+		}
+		if(name.length()<3 || name==null || parsedAge<0){
+			return false;
+		}
+		else{
+			return true;
+		}
+	}
+
 	private Person findPerson(int id) {
 		for(Person p:people){
 			if(p.getId()==id){
@@ -83,7 +131,7 @@ public class MyFirstServlet extends HttpServlet {
 		for(Person p:people){
 			if(p.getId()==id){
 				people.remove(p);
-				break;
+				return;
 			}
 		}
 	}

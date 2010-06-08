@@ -11,6 +11,7 @@
 <title>Person</title>
 </head>
 <body>
+<h2>Person</h2>
 	${person.name}<br/>
 	<c:url value="/people" var="peopleUrl"/>
 	<c:url value="/people/${person.id}/update" var="updateUrl"/>
