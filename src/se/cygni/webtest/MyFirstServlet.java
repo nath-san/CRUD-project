@@ -1,7 +1,6 @@
 package se.cygni.webtest;
 
 import java.io.IOException;
-import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -48,14 +47,7 @@ public class MyFirstServlet extends HttpServlet {
 		}
 	}
 
-	private Person findPerson(int id) {
-		for(Person p:people){
-			if(p.getId()==id){
-				return p;
-			}
-		}
-		return null;
-	}
+
 
 	protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
 		if(req.getPathInfo() == null){
@@ -65,13 +57,34 @@ public class MyFirstServlet extends HttpServlet {
 			people.add(p);
 			resp.sendRedirect(getServletContext().getContextPath()+"/people/"+p.getId());
 			return;
-		}else{
+		}else if(req.getParameter("_method")==null){
 			int id = Integer.parseInt(req.getParameter("id"));
 			Person p = findPerson(id);
 			p.setName(req.getParameter("name"));
 			p.setAge(Integer.parseInt(req.getParameter("age")));
 			resp.sendRedirect(getServletContext().getContextPath()+"/people/"+p.getId());
 			return;
+		}else{
+			deletePerson(Integer.parseInt(req.getPathInfo().substring(1)));
+			resp.sendRedirect(getServletContext().getContextPath()+"/people");
+		}
+	}
+	
+	private Person findPerson(int id) {
+		for(Person p:people){
+			if(p.getId()==id){
+				return p;
+			}
+		}
+		return null;
+	}
+	
+	private void deletePerson(int id){
+		for(Person p:people){
+			if(p.getId()==id){
+				people.remove(p);
+				break;
+			}
 		}
 	}
 

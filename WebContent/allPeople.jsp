@@ -9,15 +9,24 @@
 <html>
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<script type="text/javascript" src="confirmDelete.js"></script>
 <title>People</title>
 </head>
 <body>
-
+<h2>All people</h2>
 <c:forEach items="${people}" var="p">
-	<a href="people/${p.id}">${p.name}</a><br/>
+	<c:url value="people/${p.id}" var="personalUrl"/>
+	<a href="${personalUrl}">${p.name}</a>
+	
+	<form action="${personalUrl}" method="post" onSubmit="return confirmation()">
+		<input type="hidden" name="_method" value="DELETE"/>
+		<input type="submit" value="delete"/>
+	</form>
+	
+	<br/>
 </c:forEach>
 <br/>
 <c:url value="/people/new" var="newUrl"/>
-<a href="${newUrl}">New Person</a>
+<a href="${newUrl}">Create new Person</a>
 </body>
 </html>

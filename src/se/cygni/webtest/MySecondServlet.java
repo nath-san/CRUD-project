@@ -17,7 +17,7 @@ public class MySecondServlet extends HttpServlet {
 		String name = req.getParameter("name");
 		int id = Integer.parseInt(req.getParameter("id"));
 		int age = Integer.parseInt(req.getParameter("age"));
-		Person newPerson = new Person(name, id, age);
+		Person newPerson = new Person(name, age);
 		people.add(newPerson);
 		req.setAttribute("people", people.people);
 		getServletContext().getRequestDispatcher("/allPeople.jsp").forward(req, resp);		
