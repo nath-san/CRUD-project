@@ -1,7 +1,11 @@
 package se.cygni.webtest;
 
 import java.io.IOException;
+import java.text.DateFormat;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import javax.servlet.ServletException;
@@ -13,18 +17,25 @@ import se.cygni.webtest.Person;
 @SuppressWarnings("serial")
 public class MyFirstServlet extends HttpServlet {
 	private List<Person> people = new ArrayList<Person>();
+	private DateFormat formatter = new SimpleDateFormat("yyyyMMdd");
 	
 	public MyFirstServlet(){
-		people.add(new Person("Berra", 12));
-		people.add(new Person("Agda", 22));
-		people.add(new Person("Gurra", 32));
-		people.add(new Person("Signe", 42));
+		try{
+			Date date1 = (Date)formatter.parse("19850429");
+			Date date2 = (Date)formatter.parse("19750523");
+			Date date3 = (Date)formatter.parse("19650621");
+			people.add(new Person("Berra", date1));
+			people.add(new Person("Agda", date2));
+			people.add(new Person("Gurra", date3));
+		}
+		catch(ParseException pe){}
+
 	}
 	
 	//	@Override
 	//	protected void service(HttpServletRequest request, HttpServletResponse response)
 	//			throws ServletException, IOException {
-	//		response.getWriter().println("Hello World");
+	//		response.getWriter().println("Hello World");arg1
 	//	}
 
 	protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
@@ -34,14 +45,16 @@ public class MyFirstServlet extends HttpServlet {
 			getServletContext().getRequestDispatcher("/allPeople.jsp").forward(req, resp);
 		}
 		//New person view
-		else if(req.getPathInfo().substring(1).equals("new")){
+		else if(req.getPathInfo().endsWith("new")){
 			getServletContext().getRequestDispatcher("/new.jsp").forward(req, resp);
 		}
 		//Update person view
 		else if(req.getPathInfo().endsWith("update")){
 			int id = Integer.parseInt(req.getPathInfo().substring(1, 2));
 			Person p = findPerson(id);
+			String date = formatter.format(p.getBirthday());
 			req.setAttribute("p", p);
+			req.setAttribute("date", date);
 			getServletContext().getRequestDispatcher("/update.jsp").forward(req, resp);
 		}
 		//Person view
@@ -56,22 +69,25 @@ public class MyFirstServlet extends HttpServlet {
 
 	protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
 		String name = req.getParameter("name");
-		String age = req.getParameter("age");
+		String birthday = req.getParameter("birthday");
 		//Create a new person
 		if(req.getPathInfo() == null){
 			//Checks to see if name and age are valid
-			if(checkInput(name, age)){
-				Person p = new Person(name, Integer.parseInt(age));
-				people.add(p);
-				resp.sendRedirect(getServletContext().getContextPath()+"/people/"+p.getId());
+			if(checkInput(name, birthday)){
+				try{
+					Person p = new Person(name, (Date)formatter.parse(birthday));
+					people.add(p);
+					resp.sendRedirect(getServletContext().getContextPath()+"/people/"+p.getId());
+				}
+				catch(ParseException pe){}
 				return;
 			}
-			//If name or age are invalid, go back to form
+			//If name or birthday are invalid, go back to form
 			else{
 				req.setAttribute("errorNew", true);
 				req.setAttribute("name", name);
-				req.setAttribute("age", age);
-				req.setAttribute("message", "Invalid input! Name must contain more than three characters and age must be a positive number! Please try again!");
+				req.setAttribute("birthday", birthday);
+				req.setAttribute("message", "Invalid input! Name must contain more than three characters and birthday must have the format yyyyMMdd! Please try again!");
 				getServletContext().getRequestDispatcher("/new.jsp").forward(req, resp);
 			}
 		}
@@ -79,19 +95,22 @@ public class MyFirstServlet extends HttpServlet {
 		else if(req.getParameter("_method")==null){
 			int id = Integer.parseInt(req.getParameter("id"));
 			Person p = findPerson(id);
-			if(checkInput(name, age)){
+			if(checkInput(name, birthday)){
 				p.setName(name);
-				p.setAge(Integer.parseInt(age));
-				resp.sendRedirect(getServletContext().getContextPath()+"/people/"+p.getId());
+				try{
+					p.setBirthday((Date)formatter.parse(birthday));
+					resp.sendRedirect(getServletContext().getContextPath()+"/people/"+p.getId());
+				}
+				catch(ParseException pe){}
 				return;
 			}
-			//If name or age are invalid, go back to form
+			//If name or birthday are invalid, go back to form
 			else{
 				req.setAttribute("p", p);
 				req.setAttribute("name", name);
-				req.setAttribute("age", age);
+				req.setAttribute("birthday", birthday);
 				req.setAttribute("errorUpdate", true);
-				req.setAttribute("message", "Invalid input! Name must contain more than three characters and age must be a positive number! Please try again!");
+				req.setAttribute("message", "Invalid input! Name must contain more than three characters and birthday must have the format yyyyMMdd! Please try again!");
 				getServletContext().getRequestDispatcher("/update.jsp").forward(req, resp);
 			}
 		}
@@ -102,15 +121,14 @@ public class MyFirstServlet extends HttpServlet {
 		}
 	}
 	
-	private boolean checkInput(String name, String age) {
-		int parsedAge;
+	private boolean checkInput(String name, String birthday) {
 		try{
-			parsedAge = Integer.parseInt(age);
+			formatter.parse(birthday);
 		}
-		catch(NumberFormatException nfe){
+		catch(ParseException pe){
 			return false;
 		}
-		if(name.length()<3 || name==null || parsedAge<0){
+		if(name.length()<3 || name==null){
 			return false;
 		}
 		else{

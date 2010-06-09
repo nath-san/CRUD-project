@@ -1,14 +1,17 @@
 package se.cygni.webtest;
 
+import java.util.Date;
+
 public class Person {
 	private String name;
-	private int id, age;
+	private int id;
+	private Date birthday;
 	private static int count = 1;
 	
-	public Person(String name, int age) {
+	public Person(String name, Date birthday) {
 		this.name = name;
 		this.id = count;
-		this.age = age;
+		this.birthday = birthday;
 		count++;
 	}
 	
@@ -22,11 +25,11 @@ public class Person {
 		return id;
 	}
 	
-	public int getAge() {
-		return age;
+	public Date getBirthday() {
+		return birthday;
 	}
-	public void setAge(int age) {
-		this.age = age;
+	public void setBirthday(Date birthday) {
+		this.birthday = birthday;
 	}
 	
 }

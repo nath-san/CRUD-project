@@ -14,14 +14,14 @@
 		<p>${message}</p>
       		Name: <input type="text" name="name" size="20" value="${name}">
 		<br/>
-        	Age: <input type="text" name="age" size="10" value="${age}">
+        	Birthday: <input type="text" name="birthday" size="10" value="${birthday}">
 		<br/>
 		<br/>
 	</c:when>
 	<c:otherwise>
-			Name: <input type="text" name="name" size="20">
+			Name: <input type="text" name="name" size="20" value="enter name">
 		<br/>
-        	Age: <input type="text" name="age" size="10">
+        	Birthday: <input type="text" name="birthday" size="10" value="yyyyMMdd">
 		<br/>
 		<br/>
 	</c:otherwise>

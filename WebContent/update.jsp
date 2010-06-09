@@ -15,12 +15,12 @@
 <form action="${updateUrl}" method="POST">
 <c:choose>
 <c:when test="${errorUpdate}">
-      	Name (when wrong input): <input type="text" name="name" size="20" value="${name}"><br/>
-        Age: <input type="text" name="age" size="10" value="${age}"><br/>
+      	Name: <input type="text" name="name" size="20" value="${name}"><br/>
+        Birthday: <input type="text" name="birthday" size="10" value="${birthday}"><br/>
 </c:when>
 <c:otherwise>
-		Name (first time): <input type="text" name="name" size="20" value="${p.name}"><br/>
-        Age: <input type="text" name="age" size="10" value="${p.age}"><br/><br/>
+		Name: <input type="text" name="name" size="20" value="${p.name}"><br/>
+        Birthday: <input type="text" name="birthday" size="10" value="${date}"><br/><br/>
 </c:otherwise>      
 </c:choose>
         <input type="hidden" name="id" value="${p.id}">
